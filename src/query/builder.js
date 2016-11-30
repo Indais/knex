@@ -135,6 +135,12 @@ assign(Builder.prototype, {
     return this;
   },
 
+  // Prepends the `set local role xxx;` before the actual statement
+  withLocalRole(localRole) {
+    this._single.localRole = localRole;
+    return this;
+  },
+
   // Sets the `tableName` on the query.
   // Alias to "from" for select and "into" for insert statements
   // e.g. builder.insert({a: value}).into('tableName')

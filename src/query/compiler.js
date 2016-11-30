@@ -65,6 +65,10 @@ assign(QueryCompiler.prototype, {
       }
     }
 
+    if (this.single.localRole && val.sql) {
+      val.sql = `set local role ${this.single.localRole}; ` + val.sql
+    }
+
     if(this._undefinedInWhereClause) {
       debugBindings(defaults.bindings)
       throw new Error(

@@ -119,52 +119,52 @@ assign(Runner.prototype, {
     }
 
     return this.client.preflight(this.client.query.bind(this.client, this.connection)).then((preflightResult) => {
-    return queryPromise
-      .then((resp) => {
-        const processedResponse = this.client.processResponse(resp, runner);
-        this.builder.emit(
-          'query-response',
-          processedResponse,
-          assign({__knexUid: this.connection.__knexUid}, obj),
-          this.builder
-        );
-        this.client.emit(
-          'query-response',
-          processedResponse,
-          assign({__knexUid: this.connection.__knexUid}, obj),
-          this.builder
-        );
-        return processedResponse;
-      }).catch(Promise.TimeoutError, error => {
-        const { timeout, sql, bindings } = obj;
+      return queryPromise
+        .then((resp) => {
+          const processedResponse = this.client.processResponse(resp, runner);
+          this.builder.emit(
+            'query-response',
+            processedResponse,
+            assign({__knexUid: this.connection.__knexUid}, obj),
+            this.builder
+          );
+          this.client.emit(
+            'query-response',
+            processedResponse,
+            assign({__knexUid: this.connection.__knexUid}, obj),
+            this.builder
+          );
+          return processedResponse;
+        }).catch(Promise.TimeoutError, error => {
+          const { timeout, sql, bindings } = obj;
 
-        let cancelQuery;
-        if (obj.cancelOnTimeout) {
-          cancelQuery = this.client.cancelQuery(this.connection);
-        } else {
-          cancelQuery = Promise.resolve();
-        }
+          let cancelQuery;
+          if (obj.cancelOnTimeout) {
+            cancelQuery = this.client.cancelQuery(this.connection);
+          } else {
+            cancelQuery = Promise.resolve();
+          }
 
-        return cancelQuery
-          .catch((cancelError) => {
-            // cancellation failed
-            throw assign(cancelError, {
-              message: `After query timeout of ${timeout}ms exceeded, cancelling of query failed.`,
-              sql, bindings, timeout
+          return cancelQuery
+            .catch((cancelError) => {
+              // cancellation failed
+              throw assign(cancelError, {
+                message: `After query timeout of ${timeout}ms exceeded, cancelling of query failed.`,
+                sql, bindings, timeout
+              });
+            })
+            .then(() => {
+              // cancellation succeeded, rethrow timeout error
+              throw assign(error, {
+                message: `Defined query timeout of ${timeout}ms exceeded when running query.`,
+                sql, bindings, timeout
+              });
             });
-          })
-          .then(() => {
-            // cancellation succeeded, rethrow timeout error
-            throw assign(error, {
-              message: `Defined query timeout of ${timeout}ms exceeded when running query.`,
-              sql, bindings, timeout
-            });
-          });
-      })
-      .catch((error) => {
-        this.builder.emit('query-error', error, assign({__knexUid: this.connection.__knexUid}, obj))
-        throw error;
-      });
+        })
+        .catch((error) => {
+          this.builder.emit('query-error', error, assign({__knexUid: this.connection.__knexUid}, obj))
+          throw error;
+        });
       })
   }),
 

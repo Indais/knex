@@ -21,6 +21,8 @@ function Client_PG(config) {
   if (config.searchPath) {
     this.searchPath = config.searchPath;
   }
+
+  this.preflight = config.preflight;
 }
 inherits(Client_PG, Client)
 

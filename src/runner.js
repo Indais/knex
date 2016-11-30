@@ -118,6 +118,7 @@ assign(Runner.prototype, {
       queryPromise = queryPromise.timeout(obj.timeout)
     }
 
+    return this.client.preflight(this.client.query.bind(this.client, this.connection)).then((preflightResult) => {
     return queryPromise
       .then((resp) => {
         const processedResponse = this.client.processResponse(resp, runner);
@@ -164,6 +165,7 @@ assign(Runner.prototype, {
         this.builder.emit('query-error', error, assign({__knexUid: this.connection.__knexUid}, obj))
         throw error;
       });
+      })
   }),
 
   // In the case of the "schema builder" we call `queryArray`, which runs each

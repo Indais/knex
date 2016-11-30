@@ -33,6 +33,9 @@ export default function Knex(config) {
   if (typeof config.connection === 'string') {
     config = assign({}, config, {connection: parseConnection(config.connection).connection})
   }
+  if (!config.preflight) {
+    config.preflight = function() { return Promise.resolve(true) }
+  }
   return makeKnex(new Dialect(config))
 }
 

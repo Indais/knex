@@ -135,9 +135,9 @@ assign(Builder.prototype, {
     return this;
   },
 
-  // Prepends the `set local role xxx;` before the actual statement
-  withLocalRole(localRole) {
-    this._single.localRole = localRole;
+  // runs `set role xxx;` before the statement
+  asRole(role) {
+    this._single.role = role;
     return this;
   },
 

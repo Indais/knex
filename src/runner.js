@@ -118,7 +118,11 @@ assign(Runner.prototype, {
       queryPromise = queryPromise.timeout(obj.timeout)
     }
 
-    return this.client.preflight(this.client.query.bind(this.client, this.connection)).then((preflightResult) => {
+    var setRolePromise = this.builder._single.role
+      ? this.client.query(this.connection, `set role ${this.builder._single.role};`)
+      : Promise.resolve(true);
+
+    return setRolePromise.then(() => {
       return queryPromise
         .then((resp) => {
           const processedResponse = this.client.processResponse(resp, runner);

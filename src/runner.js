@@ -118,8 +118,11 @@ assign(Runner.prototype, {
       queryPromise = queryPromise.timeout(obj.timeout)
     }
 
-    var setRolePromise = this.builder._single.role
-      ? this.client.query(this.connection, `set role ${this.builder._single.role};`)
+    var setRolePromise = this.builder._single.user
+      ? this.client.query(this.connection, `
+set 'app.user' to ${this.builder._single.user.id};
+set 'app.account' to ${this.builder._single.user.accountId};
+        `)
       : Promise.resolve(true);
 
     return setRolePromise.then(() => {

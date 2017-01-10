@@ -113,7 +113,7 @@ assign(Runner.prototype, {
     this.builder.emit('query', assign({__knexUid: this.connection.__knexUid}, obj))
     const runner = this
 
-    var overridden_obj = this.builder._single.user ? Object.assign(obj, {
+    var overridden_obj = this.builder._single && this.builder._single.user ? Object.assign(obj, {
       sql: `
 set local "app.user" to ${this.builder._single.user.id};
 set local "app.account" to ${this.builder._single.user.accountId};

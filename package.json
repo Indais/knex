@@ -116,6 +116,14 @@
     "./lib/migrate": "./lib/util/noop.js",
     "./lib/seed": "./lib/util/noop.js"
   },
+  "babel": {
+    "presets": ["es2015-loose"],
+    "plugins": [
+      "lodash",
+      "transform-runtime",
+      "add-module-exports"
+    ]
+  },
   "files": [
     "CONTRIBUTING.md",
     "README.md",

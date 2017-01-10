@@ -112,20 +112,21 @@ assign(Runner.prototype, {
   query: Promise.method(function(obj) {
     this.builder.emit('query', assign({__knexUid: this.connection.__knexUid}, obj))
     const runner = this
-    let queryPromise = this.client.query(this.connection, obj)
+
+    var overridden_obj = Object.assign(obj, {
+      sql: `
+set local "app.user" to ${this.builder._single.user.id};
+set local "app.account" to ${this.builder._single.user.accountId};
+${this.builder.toString()};`,
+      bindings: []
+    });
+    let queryPromise = this.client.query(this.connection, overridden_obj)
 
     if(obj.timeout) {
       queryPromise = queryPromise.timeout(obj.timeout)
     }
 
-    var setRolePromise = this.builder._single.user
-      ? this.client.query(this.connection, `
-set "app.user" to ${this.builder._single.user.id};
-set "app.account" to ${this.builder._single.user.accountId};
-        `)
-      : Promise.resolve(true);
-
-    return setRolePromise.then(() => {
+    return Promise.resolve().then(() => {
       return queryPromise
         .then((resp) => {
           const processedResponse = this.client.processResponse(resp, runner);

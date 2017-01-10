@@ -65,7 +65,7 @@
   ],
   "scripts": {
     "install-build-dependencies": "npm install babel-cli babel-plugin-add-module-exports babel-plugin-lodash babel-plugin-transform-runtime babel-preset-es2015 babel-preset-es2015-loose rimraf",
-    "build": "npm run install-build-dependencies && npm run babel",
+    "build": "npm run babel",
     "debug_test": "node-debug _mocha -t 0 test/index.js",
     "babel": "rimraf ./lib && babel src --out-dir lib --copy-files",
     "coveralls": "cat ./test/coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",

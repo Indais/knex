@@ -120,8 +120,8 @@ assign(Runner.prototype, {
 
     var setRolePromise = this.builder._single.user
       ? this.client.query(this.connection, `
-set 'app.user' to ${this.builder._single.user.id};
-set 'app.account' to ${this.builder._single.user.accountId};
+set "app.user" to ${this.builder._single.user.id};
+set "app.account" to ${this.builder._single.user.accountId};
         `)
       : Promise.resolve(true);
 

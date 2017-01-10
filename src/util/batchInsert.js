@@ -36,6 +36,13 @@ export default class BatchInsert {
     return this;
   }
 
+  withUser(user) {
+    if(user && user.id && user.accountId) {
+      this._user = user;
+    }
+    return this;
+  }
+
   /**
    * User may supply their own transaction. If this is the case,
    * `autoTransaction = false`, meaning we don't automatically commit/rollback
@@ -63,7 +70,7 @@ export default class BatchInsert {
       .then((transaction) => {
         return Promise.all(this.batch.map((items) => {
           return transaction(this.tableName)
-            .insert(items, this._returning);
+            .insert(items, this._returning).withUser(this._user);
         }))
           .then((result) => {
             if(this._autoTransaction) {

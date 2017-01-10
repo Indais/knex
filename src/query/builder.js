@@ -138,13 +138,16 @@ assign(Builder.prototype, {
   // runs `set role xxx;` before the statement
   withUser(user) {
     if (!user) {
-      throw new Error('user passed to withUser is invalid:', user);
+      //console.log('user passed to withUser is invalid:', user);
+      return this;
     }
     if (!user.accountId) {
-      throw new Error('user passed to withUser contains invalid accountId:', user.accountId);
+      //console.log('user passed to withUser contains invalid accountId:', user.accountId);
+      return this;
     }
     if (!user.id) {
-      throw new Error('user passed to withUser contains invalid userId:', user.id);
+      //console.log('user passed to withUser contains invalid userId:', user.id);
+      return this;
     }
     this._single.user = user;
     return this;

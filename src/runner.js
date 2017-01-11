@@ -113,13 +113,23 @@ assign(Runner.prototype, {
     this.builder.emit('query', assign({__knexUid: this.connection.__knexUid}, obj))
     const runner = this
 
-    var overridden_obj = this.builder._single && this.builder._single.user ? Object.assign(obj, {
-      sql: `
-set local "app.user" to ${this.builder._single.user.id};
-set local "app.account" to ${this.builder._single.user.accountId};
-${this.builder.toString()};`,
-      bindings: []
-    }) : obj;
+    var overridden_obj = obj;
+    if (this.builder._single &&
+        this.builder._single.user &&
+        (this.builder._single.user.id || this.builder._single.user.accountId)) {
+      var prefix = '';
+      if (this.builder._single.user.id) {
+        prefix += `set local "app.user" to ${this.builder._single.user.id}; `;
+      }
+      if (this.builder._single.user.accountId) {
+        prefix += `set local "app.account" to ${this.builder._single.user.accountId}; `;
+      }
+      overridden_obj = Object.assign({}, obj, {
+        sql: `${prefix} ${this.builder.toString()};`,
+        bindings: []
+      });
+    }
+
     let queryPromise = this.client.query(this.connection, overridden_obj)
 
     if(obj.timeout) {

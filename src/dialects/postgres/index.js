@@ -168,7 +168,7 @@ assign(Client_PG.prototype, {
 
   _stream(connection, obj, stream, options) {
     const PGQueryStream = process.browser ? undefined : require('pg-query-stream');
-    const sql = obj.sql = this.positionBindings(obj.sql)
+    const sql = obj.sql = obj.bindings.length ? this.positionBindings(obj.sql) : obj.sql;
     return new Promise(function(resolver, rejecter) {
       const queryStream = connection.query(new PGQueryStream(sql, obj.bindings, options));
       queryStream.on('error', rejecter);
@@ -183,7 +183,7 @@ assign(Client_PG.prototype, {
   // Runs the query on the specified connection, providing the bindings
   // and any other necessary prep work.
   _query(connection, obj) {
-    let sql = obj.sql = this.positionBindings(obj.sql)
+    let sql = obj.sql = obj.bindings.length ? this.positionBindings(obj.sql) : obj.sql;
     if (obj.options) sql = extend({text: sql}, obj.options);
     return new Promise(function(resolver, rejecter) {
       connection.query(sql, obj.bindings, function(err, response) {
